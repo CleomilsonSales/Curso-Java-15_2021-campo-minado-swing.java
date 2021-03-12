@@ -3,8 +3,6 @@ package br.com.cleomilsonsales.cm.modelo;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.cleomilsonsales.cm.excecao.ExplosaoException;
-
 public class Campo {
 	private final int linha;
 	private final int coluna;
@@ -57,8 +55,12 @@ public class Campo {
 			aberto = true;
 			
 			if(minado) {
-				//exceção para interromper a aplicação
-				throw new ExplosaoException();
+				//pra criar uma lista de tarefa no TASK
+				//quando usa o "TODO" quer dizer que sera algo que precisa fazer, mas que deixar pra depois
+				// quando usa "FIXME" quer dizer que é erro que precisa ser corrigido depois
+				
+				//TODO implementar nova versão
+
 			}
 			
 			if (vizinhancaSegura()) {
@@ -123,19 +125,5 @@ public class Campo {
 		aberto = false;
 		minado = false;
 		marcado = false;
-	}
-	
-	public String toString() {
-		if (marcado) {
-			return "x";
-		}else if (aberto && minado) {
-			return "*";
-		}else if (aberto && minasNaVizinhanca() > 0) {
-			return String.valueOf(minasNaVizinhanca());
-		}else if (aberto) {
-			return " ";
-		}else {
-			return "?";
-		}
 	}
 }
