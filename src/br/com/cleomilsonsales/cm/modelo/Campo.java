@@ -12,10 +12,20 @@ public class Campo {
 	private boolean marcado = false;
 	
 	private List<Campo> vizinhos = new ArrayList<>();
+	private List<CampoObservador> observadores = new ArrayList<>();
 	
 	Campo(int linha, int coluna) {
 		this.linha = linha;
 		this.coluna = coluna;
+	}
+	
+	public void registrarObservador(CampoObservador observador) {
+		observadores.add(observador);
+	}
+	
+	private void notificarObservadores(CampoEvento evento) {
+		observadores.stream()
+			.forEach(o -> o.eventoOcorreu(this, evento));
 	}
 	
 	boolean adicionarVizinhos(Campo vizinho) {
@@ -42,26 +52,32 @@ public class Campo {
 		}
 	}
 	
-	void alternarMarcacao() {
+	public void alternarMarcacao() {
 		//para impedir abrir um campo marcado
 		if (!aberto) {
 			marcado = !marcado;
+			if(marcado) {
+				notificarObservadores(CampoEvento.MARCAR);
+			}else {
+				notificarObservadores(CampoEvento.DESMARCAR);
+			}
 		}
+		
 	}
 	
-	boolean abrir() {
+	public boolean abrir() {
 		//ação para abrir campo
-		if(!aberto && !marcado) {
-			aberto = true;
-			
+		if(!aberto && !marcado) {			
 			if(minado) {
 				//pra criar uma lista de tarefa no TASK
 				//quando usa o "TODO" quer dizer que sera algo que precisa fazer, mas que deixar pra depois
 				// quando usa "FIXME" quer dizer que é erro que precisa ser corrigido depois
 				
-				//TODO implementar nova versão
-
+				notificarObservadores(CampoEvento.EXPLODIR);
+				return true; // para sair do metodo	
 			}
+			
+			setAberto(true);
 			
 			if (vizinhancaSegura()) {
 				vizinhos.forEach(v -> v.abrir());
@@ -82,7 +98,7 @@ public class Campo {
 		return minado;
 	}
 	
-	boolean vizinhancaSegura() {
+	public boolean vizinhancaSegura() {
 		return vizinhos.stream().noneMatch(v -> v.minado);
 	}
 	
@@ -93,6 +109,10 @@ public class Campo {
 	
 	void setAberto(boolean aberto) {
 		this.aberto = aberto;
+		
+		if (aberto) {
+			notificarObservadores(CampoEvento.ABRIR);
+		}
 	}
 	
 	public boolean isAberto() {
@@ -117,13 +137,15 @@ public class Campo {
 		return desvendado || protegido;
 	}
 	
-	long minasNaVizinhanca() {
-		return vizinhos.stream().filter(v -> v.minado).count();
+	public int minasNaVizinhanca() {
+		return (int) vizinhos.stream().filter(v -> v.minado).count();
 	}
 	
 	void reiniciar() {
 		aberto = false;
 		minado = false;
 		marcado = false;
+		
+		notificarObservadores(CampoEvento.REINICIAR);
 	}
 }
