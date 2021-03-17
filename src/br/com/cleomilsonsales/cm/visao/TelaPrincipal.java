@@ -11,15 +11,15 @@ public class TelaPrincipal extends JFrame {
 	
 	public TelaPrincipal() {
 		//definindo tamanho do jogo
-		Tabuleiro tabuleiro = new Tabuleiro(12, 13, 13);
+		Tabuleiro tabuleiro = new Tabuleiro(12, 13, 14);
 		
 		setLayout(new BorderLayout());
-		getContentPane().add(new PainelTabuleiro(tabuleiro), BorderLayout.CENTER);
-		getContentPane().add(new PainelRodape(tabuleiro), BorderLayout.SOUTH);
+		add(new PainelTabuleiro(tabuleiro), BorderLayout.CENTER);
+		add(new PainelRodape(tabuleiro), BorderLayout.SOUTH);
 		
 		setTitle("Campo Minado");
 		setSize(690, 438);
-		setLocale(null);
+		setLocationRelativeTo(null);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setVisible(true);
 	}
